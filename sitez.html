@@ -1,0 +1,526 @@
+<html><head><base href="https://websim.ai" /><title>WebSim.ai API Console</title><style>
+  body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  header {
+    background-color: #3498db;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    margin-bottom: 2rem;
+  }
+  h1 {
+    margin: 0;
+  }
+  main {
+    display: flex;
+    flex-grow: 1;
+  }
+  nav {
+    width: 250px;
+    background-color: #f4f4f4;
+    padding: 1rem;
+    margin-right: 2rem;
+  }
+  nav ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  nav li {
+    margin-bottom: 0.5rem;
+  }
+  nav a {
+    text-decoration: none;
+    color: #333;
+  }
+  nav a:hover {
+    color: #3498db;
+  }
+  .content {
+    flex-grow: 1;
+  }
+  .endpoint {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  .method {
+    font-weight: bold;
+    color: #e74c3c;
+  }
+  .url {
+    color: #27ae60;
+  }
+  form {
+    margin-top: 1rem;
+  }
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  input[type="text"], textarea {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  button:hover {
+    background-color: #2980b9;
+  }
+  #response {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+</style></head><body>
+<header>
+  <h1>WebSim.ai API Console</h1>
+</header>
+<main>
+  <nav>
+    <ul>
+      <li><a href="#create-website">ZEN Create Website</a></li>
+      <li><a href="#get-website">Get Website</a></li>
+      <li><a href="#update-website">Update Website</a></li>
+      <li><a href="#delete-website">Delete Website</a></li>
+      <li><a href="#list-websites">List Websites</a></li>
+      <li><a href="#create-webhook">Create Webhook</a></li>
+      <li><a href="#generate-lorem-ipsum">Generate Lorem Ipsum</a></li>
+      <li><a href="#minify-html">Minify HTML</a></li>
+      <li><a href="#generate-template">Generate Site Template</a></li>
+      <li><a href="#simulate-traffic">Simulate Website Traffic</a></li>
+    </ul>
+  </nav>
+  <div class="content">
+    <div id="create-website" class="endpoint">
+      <h2>Create a New Website</h2>
+      <p class="method">POST</p>
+      <p class="url">/api/v1/websites</p>
+      <form id="create-website-form">
+        <label for="create-url">URL:</label>
+        <input type="text" id="create-url" name="url" required>
+        <label for="create-title">Title:</label>
+        <input type="text" id="create-title" name="title" required>
+        <label for="create-description">Description:</label>
+        <input type="text" id="create-description" name="description" required>
+        <label for="create-content">Content:</label>
+        <textarea id="create-content" name="content" required></textarea>
+        <button type="submit">Create Website</button>
+      </form>
+    </div>
+    <div id="get-website" class="endpoint">
+      <h2>Get Website Details</h2>
+      <p class="method">GET</p>
+      <p class="url">/api/v1/websites/{website_id}</p>
+      <form id="get-website-form">
+        <label for="get-website-id">Website ID:</label>
+        <input type="text" id="get-website-id" name="website_id" required>
+        <button type="submit">Get Website</button>
+      </form>
+    </div>
+    <div id="update-website" class="endpoint">
+      <h2>Update Website</h2>
+      <p class="method">PUT</p>
+      <p class="url">/api/v1/websites/{website_id}</p>
+      <form id="update-website-form">
+        <label for="update-website-id">Website ID:</label>
+        <input type="text" id="update-website-id" name="website_id" required>
+        <label for="update-title">Title:</label>
+        <input type="text" id="update-title" name="title">
+        <label for="update-description">Description:</label>
+        <input type="text" id="update-description" name="description">
+        <label for="update-content">Content:</label>
+        <textarea id="update-content" name="content"></textarea>
+        <button type="submit">Update Website</button>
+      </form>
+    </div>
+    <div id="delete-website" class="endpoint">
+      <h2>Delete Website</h2>
+      <p class="method">DELETE</p>
+      <p class="url">/api/v1/websites/{website_id}</p>
+      <form id="delete-website-form">
+        <label for="delete-website-id">Website ID:</label>
+        <input type="text" id="delete-website-id" name="website_id" required>
+        <button type="submit">Delete Website</button>
+      </form>
+    </div>
+    <div id="list-websites" class="endpoint">
+      <h2>List Websites</h2>
+      <p class="method">GET</p>
+      <p class="url">/api/v1/websites</p>
+      <form id="list-websites-form">
+        <label for="list-page">Page:</label>
+        <input type="number" id="list-page" name="page" value="1" min="1">
+        <label for="list-per-page">Per Page:</label>
+        <input type="number" id="list-per-page" name="per_page" value="20" min="1" max="100">
+        <button type="submit">List Websites</button>
+      </form>
+    </div>
+    <div id="create-webhook" class="endpoint">
+      <h2>Create Webhook</h2>
+      <p class="method">POST</p>
+      <p class="url">/api/v1/webhooks</p>
+      <form id="create-webhook-form">
+        <label for="webhook-url">Webhook URL:</label>
+        <input type="text" id="webhook-url" name="url" required>
+        <label for="webhook-events">Events (comma-separated):</label>
+        <input type="text" id="webhook-events" name="events" required>
+        <button type="submit">Create Webhook</button>
+      </form>
+    </div>
+    <div id="generate-lorem-ipsum" class="endpoint">
+      <h2>Generate Lorem Ipsum</h2>
+      <p class="method">GET</p>
+      <p class="url">/api/v1/utils/lorem-ipsum</p>
+      <form id="generate-lorem-ipsum-form">
+        <label for="lorem-paragraphs">Paragraphs:</label>
+        <input type="number" id="lorem-paragraphs" name="paragraphs" value="3" min="1" max="10">
+        <label for="lorem-words">Words per Paragraph:</label>
+        <input type="number" id="lorem-words" name="words" value="50" min="1" max="200">
+        <button type="submit">Generate Lorem Ipsum</button>
+      </form>
+    </div>
+    <div id="minify-html" class="endpoint">
+      <h2>Minify HTML</h2>
+      <p class="method">POST</p>
+      <p class="url">/api/v1/utils/minify</p>
+      <form id="minify-html-form">
+        <label for="minify-html-content">HTML Content:</label>
+        <textarea id="minify-html-content" name="html" required></textarea>
+        <button type="submit">Minify HTML</button>
+      </form>
+    </div>
+    <div id="generate-template" class="endpoint">
+      <h2>Generate Site Template</h2>
+      <p class="method">POST</p>
+      <p class="url">/api/v1/templates/generate</p>
+      <form id="generate-template-form">
+        <label for="template-description">Description:</label>
+        <input type="text" id="template-description" name="description" required>
+        <label for="template-style">Style:</label>
+        <input type="text" id="template-style" name="style" required>
+        <label for="template-color-scheme">Color Scheme:</label>
+        <input type="text" id="template-color-scheme" name="color_scheme" required>
+        <button type="submit">Generate Template</button>
+      </form>
+    </div>
+    <div id="simulate-traffic" class="endpoint">
+      <h2>Simulate Website Traffic</h2>
+      <p class="method">POST</p>
+      <p class="url">/api/v1/websites/{website_id}/simulate-traffic</p>
+      <form id="simulate-traffic-form">
+        <label for="traffic-website-id">Website ID:</label>
+        <input type="text" id="traffic-website-id" name="website_id" required>
+        <label for="traffic-duration">Duration:</label>
+        <input type="text" id="traffic-duration" name="duration" required>
+        <label for="traffic-visitors">Visitors per Day:</label>
+        <input type="number" id="traffic-visitors" name="visitors_per_day" required>
+        <label for="traffic-bounce-rate">Bounce Rate:</label>
+        <input type="number" id="traffic-bounce-rate" name="bounce_rate" step="0.01" min="0" max="1" required>
+        <button type="submit">Simulate Traffic</button>
+      </form>
+    </div>
+    <div id="response">
+      <h2>API Response</h2>
+      <pre id="response-content"></pre>
+    </div>
+  </div>
+</main>
+<script>
+  const API_BASE_URL = 'https://api.websim.ai/v1';
+  const API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your actual API key
+
+  async function makeApiRequest(endpoint, method, data = null) {
+    const url = `${API_BASE_URL}${endpoint}`;
+    const options = {
+      method: method,
+      headers: {
+        'Authorization': `Bearer ${API_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    };
+
+    if (data) {
+      options.body = JSON.stringify(data);
+    }
+
+    try {
+      const response = await fetch(url, options);
+      const responseData = await response.json();
+      document.getElementById('response-content').textContent = JSON.stringify(responseData, null, 2);
+    } catch (error) {
+      document.getElementById('response-content').textContent = `Error: ${error.message}`;
+    }
+  }
+
+  document.getElementById('create-website-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+    await makeApiRequest('/websites', 'POST', data);
+  });
+
+  document.getElementById('get-website-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const websiteId = document.getElementById('get-website-id').value;
+    await makeApiRequest(`/websites/${websiteId}`, 'GET');
+  });
+
+  document.getElementById('update-website-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const websiteId = document.getElementById('update-website-id').value;
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+    delete data.website_id;
+    await makeApiRequest(`/websites/${websiteId}`, 'PUT', data);
+  });
+
+  document.getElementById('delete-website-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const websiteId = document.getElementById('delete-website-id').value;
+    await makeApiRequest(`/websites/${websiteId}`, 'DELETE');
+  });
+
+  document.getElementById('list-websites-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const page = document.getElementById('list-page').value;
+    const perPage = document.getElementById('list-per-page').value;
+    await makeApiRequest(`/websites?page=${page}&per_page=${perPage}`, 'GET');
+  });
+
+  document.getElementById('create-webhook-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+    data.events = data.events.split(',').map(event => event.trim());
+    await makeApiRequest('/webhooks', 'POST', data);
+  });
+
+  document.getElementById('generate-lorem-ipsum-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const paragraphs = document.getElementById('lorem-paragraphs').value;
+    const words = document.getElementById('lorem-words').value;
+    await makeApiRequest(`/utils/lorem-ipsum?paragraphs=${paragraphs}&words=${words}`, 'GET');
+  });
+
+  document.getElementById('minify-html-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+    await makeApiRequest('/utils/minify', 'POST', data);
+  });
+
+  document.getElementById('generate-template-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+    await makeApiRequest('/templates/generate', 'POST', data);
+  });
+
+  document.getElementById('simulate-traffic-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const websiteId = document.getElementById('traffic-website-id').value;
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+    delete data.website_id;
+    await makeApiRequest(`/websites/${websiteId}/simulate-traffic`, 'POST', data);
+  });
+</script>
+</body></html><footer>
+  <p>&copy; 2023 WebSim.ai - Empowering web simulation and prototyping</p>
+</footer>
+
+<script>
+  // Function to show/hide endpoints based on navigation
+  function showEndpoint(endpointId) {
+    const endpoints = document.querySelectorAll('.endpoint');
+    endpoints.forEach(endpoint => {
+      endpoint.style.display = 'none';
+    });
+    document.getElementById(endpointId).style.display = 'block';
+  }
+
+  // Add click event listeners to navigation links
+  const navLinks = document.querySelectorAll('nav a');
+  navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const endpointId = e.target.getAttribute('href').substring(1);
+      showEndpoint(endpointId);
+    });
+  });
+
+  // Show the first endpoint by default
+  showEndpoint('create-website');
+
+  // Add error handling to API requests
+  function handleApiError(error) {
+    console.error('API Error:', error);
+    document.getElementById('response-content').textContent = `Error: ${error.message}`;
+  }
+
+  // Update makeApiRequest function to use the new error handling
+  async function makeApiRequest(endpoint, method, data = null) {
+    const url = `${API_BASE_URL}${endpoint}`;
+    const options = {
+      method: method,
+      headers: {
+        'Authorization': `Bearer ${API_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    };
+
+    if (data) {
+      options.body = JSON.stringify(data);
+    }
+
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const responseData = await response.json();
+      document.getElementById('response-content').textContent = JSON.stringify(responseData, null, 2);
+    } catch (error) {
+      handleApiError(error);
+    }
+  }
+
+  // Add form validation
+  function validateForm(form) {
+    const inputs = form.querySelectorAll('input[required], textarea[required]');
+    let isValid = true;
+    inputs.forEach(input => {
+      if (!input.value.trim()) {
+        isValid = false;
+        input.classList.add('error');
+      } else {
+        input.classList.remove('error');
+      }
+    });
+    return isValid;
+  }
+
+  // Update event listeners to include form validation
+  const forms = document.querySelectorAll('form');
+  forms.forEach(form => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (validateForm(e.target)) {
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+        const method = e.target.getAttribute('data-method') || 'POST';
+        const endpoint = e.target.getAttribute('data-endpoint');
+        await makeApiRequest(endpoint, method, data);
+      }
+    });
+  });
+
+  // Add a function to populate form fields with sample data
+  function populateSampleData(formId) {
+    const form = document.getElementById(formId);
+    const inputs = form.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+      switch (input.name) {
+        case 'url':
+          input.value = 'https://example.com';
+          break;
+        case 'title':
+          input.value = 'Sample Website';
+          break;
+        case 'description':
+          input.value = 'This is a sample website description.';
+          break;
+        case 'content':
+          input.value = '<h1>Welcome to my sample website</h1><p>This is some sample content.</p>';
+          break;
+        case 'website_id':
+          input.value = 'abc123';
+          break;
+        case 'events':
+          input.value = 'website.created,website.updated';
+          break;
+        case 'duration':
+          input.value = '7d';
+          break;
+        case 'visitors_per_day':
+          input.value = '1000';
+          break;
+        case 'bounce_rate':
+          input.value = '0.3';
+          break;
+      }
+    });
+  }
+
+  // Add buttons to populate sample data
+  const sampleDataButtons = document.querySelectorAll('.sample-data-btn');
+  sampleDataButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+      const formId = e.target.getAttribute('data-form');
+      populateSampleData(formId);
+    });
+  });
+
+  // Add a clear form function
+  function clearForm(formId) {
+    const form = document.getElementById(formId);
+    form.reset();
+  }
+
+  // Add clear buttons to forms
+  const clearButtons = document.querySelectorAll('.clear-form-btn');
+  clearButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+      const formId = e.target.getAttribute('data-form');
+      clearForm(formId);
+    });
+  });
+
+  // Add a function to copy response to clipboard
+  function copyResponseToClipboard() {
+    const responseContent = document.getElementById('response-content');
+    const textArea = document.createElement('textarea');
+    textArea.value = responseContent.textContent;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+    alert('Response copied to clipboard!');
+  }
+
+  // Add a copy button to the response section
+  const copyButton = document.createElement('button');
+  copyButton.textContent = 'Copy to Clipboard';
+  copyButton.addEventListener('click', copyResponseToClipboard);
+  document.getElementById('response').appendChild(copyButton);
+}
+
+// Call the initialization function when the DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeApiConsole);
+</script>
+
+</body>
+</html>
