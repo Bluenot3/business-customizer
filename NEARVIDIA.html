@@ -1,0 +1,452 @@
+<html><head><base href="https://cryptolifecyclesim.io/">
+<title>Advanced Crypto Token Lifecycle Simulator</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.1/dist/chartjs-adapter-moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 20px;
+    }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+        color: #333;
+    }
+    .chart-container {
+        position: relative;
+        height: 400px;
+        width: 100%;
+    }
+    .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    .control-group {
+        flex: 1;
+        min-width: 200px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    input, select, button {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+    }
+    button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+    .blue-button {
+        background-color: #008CBA;
+    }
+    .blue-button:hover {
+        background-color: #007B9E;
+    }
+    .metrics {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+    .metric {
+        text-align: center;
+    }
+    .log-container, .brainstorm-container {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+    }
+    #eventLog, #brainstormBox {
+        height: 150px;
+        overflow-y: auto;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1>Advanced Crypto Token Lifecycle Simulator</h1>
+        <div class="chart-container">
+            <canvas id="priceChart"></canvas>
+        </div>
+        <div class="controls">
+            <div class="control-group">
+                <label for="token">Token:</label>
+                <select id="token">
+                    <option value="custom">Custom</option>
+                    <option value="bitcoin">Bitcoin</option>
+                    <option value="ethereum">Ethereum</option>
+                    <option value="cardano">Cardano</option>
+                    <option value="near">NEAR</option>
+                </select>
+                <label for="blockchain">Blockchain:</label>
+                <select id="blockchain">
+                    <option value="ethereum">Ethereum</option>
+                    <option value="binance">Binance Smart Chain</option>
+                    <option value="solana">Solana</option>
+                    <option value="cardano">Cardano</option>
+                    <option value="near">NEAR Protocol</option>
+                </select>
+                <label for="initialPrice">Initial Price (USD):</label>
+                <input type="number" id="initialPrice" value="0.1" step="0.01">
+                <label for="initialSupply">Initial Supply:</label>
+                <input type="number" id="initialSupply" value="1000000">
+                <label for="marketCap">Initial Market Cap (USD):</label>
+                <input type="number" id="marketCap" value="100000">
+                <label for="tradingVolume">Initial Trading Volume (USD):</label>
+                <input type="number" id="tradingVolume" value="10000">
+            </div>
+            <div class="control-group">
+                <label for="stakingRate">Staking Rate (%):</label>
+                <input type="number" id="stakingRate" value="5" min="0" max="100">
+                <label for="burnRate">Burn Rate (%):</label>
+                <input type="number" id="burnRate" value="1" min="0" max="100">
+                <label for="rewardRate">Reward Rate (%):</label>
+                <input type="number" id="rewardRate" value="2" min="0" max="100">
+                <label for="marketSentiment">Market Sentiment:</label>
+                <select id="marketSentiment">
+                    <option value="bullish">Bullish</option>
+                    <option value="neutral" selected>Neutral</option>
+                    <option value="bearish">Bearish</option>
+                </select>
+                <label for="simulationSpeed">Simulation Speed:</label>
+                <input type="range" id="simulationSpeed" min="1" max="10" value="5">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate">
+            </div>
+        </div>
+        <div class="controls">
+            <button id="startBtn">Start Simulation</button>
+            <button id="pauseBtn">Pause Simulation</button>
+            <button id="resetBtn">Reset Simulation</button>
+        </div>
+        <div class="controls">
+            <button class="blue-button" id="addEventBtn">Add Random Event</button>
+            <button class="blue-button" id="addIntegrationBtn">Add Integration</button>
+            <button class="blue-button" id="launchFeatureBtn">Launch New Feature</button>
+        </div>
+        <div class="metrics">
+            <div class="metric">
+                <h3>Current Price</h3>
+                <p id="currentPrice">$0.00</p>
+            </div>
+            <div class="metric">
+                <h3>Market Cap</h3>
+                <p id="currentMarketCap">$0.00</p>
+            </div>
+            <div class="metric">
+                <h3>Trading Volume</h3>
+                <p id="currentTradingVolume">$0.00</p>
+            </div>
+            <div class="metric">
+                <h3>Current Supply</h3>
+                <p id="currentSupply">0</p>
+            </div>
+        </div>
+        <div class="log-container">
+            <h2>Event Log</h2>
+            <div id="eventLog"></div>
+        </div>
+        <div class="brainstorm-container">
+            <h2>Founder Actions Brainstorm</h2>
+            <div id="brainstormBox"></div>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let chart;
+    let simulationInterval;
+    let currentPrice, currentSupply, currentMarketCap, currentTradingVolume;
+    let timeElapsed = 0;
+    let isSimulationRunning = false;
+    let currentDate;
+
+    function initializeChart() {
+        const ctx = document.getElementById('priceChart').getContext('2d');
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: 'Token Price (USD)',
+                    data: [],
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    function startSimulation() {
+        if (!isSimulationRunning) {
+            isSimulationRunning = true;
+            const speed = document.getElementById('simulationSpeed').value;
+            simulationInterval = setInterval(updateSimulation, 1000 / speed);
+        }
+    }
+
+    function pauseSimulation() {
+        isSimulationRunning = false;
+        clearInterval(simulationInterval);
+    }
+
+    function resetSimulation() {
+        pauseSimulation();
+        timeElapsed = 0;
+        currentPrice = parseFloat(document.getElementById('initialPrice').value);
+        currentSupply = parseFloat(document.getElementById('initialSupply').value);
+        currentMarketCap = parseFloat(document.getElementById('marketCap').value);
+        currentTradingVolume = parseFloat(document.getElementById('tradingVolume').value);
+        currentDate = new Date(document.getElementById('startDate').value);
+        chart.data.datasets[0].data = [];
+        chart.update();
+        updateMetrics();
+        document.getElementById('eventLog').innerHTML = '';
+        document.getElementById('brainstormBox').innerHTML = '';
+    }
+
+    function updateSimulation() {
+        timeElapsed++;
+        currentDate.setDate(currentDate.getDate() + 1);
+        const stakingRate = parseFloat(document.getElementById('stakingRate').value) / 100;
+        const burnRate = parseFloat(document.getElementById('burnRate').value) / 100;
+        const rewardRate = parseFloat(document.getElementById('rewardRate').value) / 100;
+        const marketSentiment = document.getElementById('marketSentiment').value;
+        const blockchain = document.getElementById('blockchain').value;
+
+        // Price change logic
+        let priceChange = (Math.random() - 0.5) * 0.1;
+        if (marketSentiment === 'bullish') priceChange += 0.02;
+        if (marketSentiment === 'bearish') priceChange -= 0.02;
+
+        // Blockchain-specific modifiers
+        if (blockchain === 'near') {
+            priceChange *= 1.1; // NEAR tends to be more volatile
+            if (timeElapsed % 30 === 0) { // Monthly NEAR-specific event
+                addNearEvent();
+            }
+        }
+
+        currentPrice *= (1 + priceChange);
+        currentSupply *= (1 - burnRate + rewardRate);
+        currentMarketCap = currentPrice * currentSupply;
+        currentTradingVolume *= (1 + (Math.random() - 0.5) * 0.2);
+
+        chart.data.datasets[0].data.push({x: currentDate, y: currentPrice});
+        chart.update();
+
+        updateMetrics();
+
+        // Random events
+        if (Math.random() < 0.05) {
+            addRandomEvent();
+        }
+
+        // Check for simulation end conditions
+        if (currentPrice <= 0) {
+            pauseSimulation();
+            alert('Simulation ended: Token price reached zero.');
+        }
+    }
+
+    function updateMetrics() {
+        document.getElementById('currentPrice').textContent = `$${currentPrice.toFixed(6)}`;
+        document.getElementById('currentMarketCap').textContent = `$${currentMarketCap.toFixed(2)}`;
+        document.getElementById('currentTradingVolume').textContent = `$${currentTradingVolume.toFixed(2)}`;
+        document.getElementById('currentSupply').textContent = currentSupply.toFixed(0);
+    }
+
+    function addRandomEvent() {
+        const events = [
+            "Major exchange listing announced",
+            "Partnership with tech giant revealed",
+            "Regulatory concerns in key market",
+            "Successful security audit completed",
+            "Whale wallet movement detected",
+            "New roadmap released",
+            "Community governance proposal passed",
+            "Major dApp launched on the network"
+        ];
+        const event = events[Math.floor(Math.random() * events.length)];
+        const logEntry = `${currentDate.toDateString()}: ${event}`;
+        addToEventLog(logEntry);
+        
+        // Event effects
+        if (event.includes("listing") || event.includes("Partnership")) {
+            currentPrice *= 1.1;
+            currentTradingVolume *= 1.5;
+        } else if (event.includes("Regulatory")) {
+            currentPrice *= 0.9;
+            currentTradingVolume *= 0.8;
+        } else if (event.includes("dApp launched")) {
+            currentPrice *= 1.05;
+            currentTradingVolume *= 1.2;
+        }
+        
+        updateMetrics();
+    }
+
+    function addNearEvent() {
+        const nearEvents = [
+            "NEAR Collective governance update",
+            "New sharding implementation",
+            "Major Aurora (Ethereum Layer-2 on NEAR) upgrade",
+            "NEAR ecosystem fund announcement",
+            "New NEAR Foundation regional hub established"
+        ];
+        const event = nearEvents[Math.floor(Math.random() * nearEvents.length)];
+        addToEventLog(`${currentDate.toDateString()}: ${event}`);
+        
+        // NEAR-specific event effects
+        currentPrice *= 1.15;
+        currentTradingVolume *= 1.3;
+        updateMetrics();
+    }
+
+    function addToEventLog(entry) {
+        const logElement = document.getElementById('eventLog');
+        const newEntry = document.createElement('p');
+        newEntry.textContent = entry;
+        logElement.insertBefore(newEntry, logElement.firstChild);
+    }
+
+    function addIntegration() {
+        const integrations = [
+            "DeFi protocol integration",
+            "Cross-chain bridge deployment",
+            "NFT marketplace launch",
+            "Metaverse project collaboration",
+            "Layer 2 scaling solution implementation",
+            "Decentralized exchange integration",
+            "Yield farming protocol launch"
+        ];
+        const integration = integrations[Math.floor(Math.random() * integrations.length)];
+        addToEventLog(`${currentDate.toDateString()}: ${integration} completed`);
+        currentPrice *= 1.05;
+        currentTradingVolume *= 1.2;
+        updateMetrics();
+    }
+
+    function launchFeature() {
+        const features = [
+            "Staking rewards program",
+            "Governance voting system",
+            "Token burning mechanism",
+            "Yield farming opportunities",
+            "Mobile wallet app",
+            "Decentralized identity solution",
+            "Smart contract upgrade"
+        ];
+        const feature = features[Math.floor(Math.random() * features.length)];
+        addToEventLog(`${currentDate.toDateString()}: Launched new feature - ${feature}`);
+        currentPrice *= 1.03;
+        currentTradingVolume *= 1.1;
+        updateMetrics();
+    }
+
+    function addFounderAction() {
+        const actions = [
+            "Conduct AMA session with community",
+            "Release detailed roadmap update",
+            "Announce bug bounty program",
+            "Initiate token buyback program",
+            "Expand development team",
+            "Launch developer grants program",
+            "Announce major partnership"
+        ];
+        const action = actions[Math.floor(Math.random() * actions.length)];
+        const brainstormElement = document.getElementById('brainstormBox');
+        const newAction = document.createElement('p');
+        newAction.textContent = `Suggested Action: ${action}`;
+        brainstormElement.insertBefore(newAction, brainstormElement.firstChild);
+    }
+
+    // Initialize event listeners
+    document.getElementById('startBtn').addEventListener('click', startSimulation);
+    document.getElementById('pauseBtn').addEventListener('click', pauseSimulation);
+    document.getElementById('resetBtn').addEventListener('click', resetSimulation);
+    document.getElementById('addEventBtn').addEventListener('click', addRandomEvent);
+    document.getElementById('addIntegrationBtn').addEventListener('click', addIntegration);
+    document.getElementById('launchFeatureBtn').addEventListener('click', launchFeature);
+
+    document.getElementById('simulationSpeed').addEventListener('input', function() {
+        if (isSimulationRunning) {
+            pauseSimulation();
+            startSimulation();
+        }
+    });
+
+    document.getElementById('token').addEventListener('change', async function() {
+        const token = this.value.toLowerCase();
+        if (token !== 'custom') {
+            try {
+                const response = await axios.get(`https://api.coingecko.com/api/v3/coins/${token}`);
+                const data = response.data;
+                document.getElementById('initialPrice').value = data.market_data.current_price.usd;
+                document.getElementById('initialSupply').value = data.market_data.circulating_supply;
+                document.getElementById('marketCap').value = data.market_data.market_cap.usd;
+                document.getElementById('tradingVolume').value = data.market_data.total_volume.usd;
+            } catch (error) {
+                console.error('Error fetching token data:', error);
+                alert('Error fetching token data. Please try again or use custom values.');
+            }
+        }
+    });
+
+    // Initialize chart and metrics
+    initializeChart();
+    
+    // Set default start date to today
+    document.getElementById('startDate').valueAsDate = new Date();
+    
+    // Initialize variables
+    currentPrice = parseFloat(document.getElementById('initialPrice').value);
+    currentSupply = parseFloat(document.getElementById('initialSupply').value);
+    currentMarketCap = parseFloat(document.getElementById('marketCap').value);
+    currentTradingVolume = parseFloat(document.getElementById('tradingVolume').value);
+    currentDate = new Date(document.getElementById('startDate').value);
+    
+    updateMetrics();
+
+    // Periodically add founder actions
+    setInterval(addFounderAction, 30000); // Every 30 seconds
+});
+</script>
+</body>
+</html>
