@@ -1,0 +1,768 @@
+<html><head><base href="https://zen-ai-simulator.com/" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZEN AI Business Impact Simulator Enterprise Edition</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+:root {
+  --primary-color: #4a90e2;
+  --secondary-color: #50c878;
+  --tertiary-color: #ff6b6b;
+  --background-color: #f0f4f8;
+  --text-color: #333;
+  --card-background: #ffffff;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --chart-color-1: #4a90e2;
+  --chart-color-2: #50c878;
+  --chart-color-3: #ff6b6b;
+  --chart-color-4: #ffa500;
+  --chart-color-5: #9b59b6;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.6;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px;
+}
+
+h1, h2, h3 {
+  margin-bottom: 20px;
+  color: var(--primary-color);
+}
+
+.simulator {
+  background-color: var(--card-background);
+  border-radius: 15px;
+  padding: 40px;
+  box-shadow: 0 15px 30px var(--shadow-color);
+  margin-bottom: 40px;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: var(--primary-color);
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 12px;
+  border-radius: 6px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+input[type="range"]:hover {
+  opacity: 1;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover,
+input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+}
+
+select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #d3d3d3;
+  background-color: white;
+  font-size: 16px;
+}
+
+.value-display {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--secondary-color);
+  margin-top: 10px;
+}
+
+.results {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.result-card {
+  background-color: var(--card-background);
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px var(--shadow-color);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.result-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px var(--shadow-color);
+}
+
+.result-value {
+  font-size: 32px;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-top: 15px;
+}
+
+#impactChart, #comparisonChart {
+  width: 100%;
+  height: 500px;
+  margin-top: 40px;
+}
+
+.custom-tooltip {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  max-width: 300px;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pulse-animation {
+  animation: pulse 1s infinite;
+}
+
+.scenario-buttons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.scenario-button {
+  padding: 10px 20px;
+  margin: 0 10px;
+  font-size: 16px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.scenario-button:hover {
+  background-color: #3a7bc8;
+}
+
+.advanced-options {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+}
+
+.advanced-options h3 {
+  margin-bottom: 15px;
+}
+
+.advanced-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .controls, .results {
+    grid-template-columns: 1fr;
+  }
+  
+  .container {
+    padding: 20px;
+  }
+  
+  .simulator {
+    padding: 20px;
+  }
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.4/math.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <h1>ZEN AI Business Impact Simulator Enterprise Edition</h1>
+  <p>Experience the future of business with our state-of-the-art AI simulation tool. Fine-tune parameters to visualize the transformative impact of AI on your organization's key performance indicators.</p>
+  
+  <div class="simulator">
+    <div class="scenario-buttons">
+      <button class="scenario-button" onclick="loadScenario('conservative')">Conservative</button>
+      <button class="scenario-button" onclick="loadScenario('moderate')">Moderate</button>
+      <button class="scenario-button" onclick="loadScenario('aggressive')">Aggressive</button>
+    </div>
+    
+    <div class="controls">
+      <div class="control-group">
+        <label for="aiAdoption">AI Adoption Level (%)</label>
+        <input type="range" id="aiAdoption" min="0" max="100" value="50" step="1">
+        <span class="value-display" id="aiAdoptionValue">50%</span>
+      </div>
+      <div class="control-group">
+        <label for="dataQuality">Data Quality (%)</label>
+        <input type="range" id="dataQuality" min="0" max="100" value="70" step="1">
+        <span class="value-display" id="dataQualityValue">70%</span>
+      </div>
+      <div class="control-group">
+        <label for="employeeTraining">Employee AI Training (hours/month)</label>
+        <input type="range" id="employeeTraining" min="0" max="80" value="20" step="1">
+        <span class="value-display" id="employeeTrainingValue">20 hours</span>
+      </div>
+      <div class="control-group">
+        <label for="investmentLevel">AI Investment Level ($M)</label>
+        <input type="range" id="investmentLevel" min="0" max="10" value="2" step="0.1">
+        <span class="value-display" id="investmentLevelValue">$2M</span>
+      </div>
+      <div class="control-group">
+        <label for="industryType">Industry Type</label>
+        <select id="industryType">
+          <option value="tech">Technology</option>
+          <option value="finance">Finance</option>
+          <option value="healthcare">Healthcare</option>
+          <option value="retail">Retail</option>
+          <option value="manufacturing">Manufacturing</option>
+          <option value="education">Education</option>
+          <option value="energy">Energy</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label for="companySize">Company Size</label>
+        <select id="companySize">
+          <option value="small">Small (1-50 employees)</option>
+          <option value="medium">Medium (51-500 employees)</option>
+          <option value="large">Large (501-5000 employees)</option>
+          <option value="enterprise">Enterprise (5000+ employees)</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="results">
+      <div class="result-card">
+        <h3>Productivity Increase</h3>
+        <div class="result-value" id="productivityIncrease">0%</div>
+      </div>
+      <div class="result-card">
+        <h3>Cost Reduction</h3>
+        <div class="result-value" id="costReduction">0%</div>
+      </div>
+      <div class="result-card">
+        <h3>Customer Satisfaction</h3>
+        <div class="result-value" id="customerSatisfaction">0%</div>
+      </div>
+      <div class="result-card">
+        <h3>Time-to-Market Reduction</h3>
+        <div class="result-value" id="timeToMarket">0%</div>
+      </div>
+      <div class="result-card">
+        <h3>ROI</h3>
+        <div class="result-value" id="roi">0%</div>
+      </div>
+      <div class="result-card">
+        <h3>Innovation Index</h3>
+        <div class="result-value" id="innovationIndex">0</div>
+      </div>
+    </div>
+    
+    <canvas id="impactChart"></canvas>
+    <canvas id="comparisonChart"></canvas>
+    
+    <div class="advanced-options">
+      <h3>Advanced Options</h3>
+      <div class="advanced-controls">
+        <div class="control-group">
+          <label for="aiComplexity">AI System Complexity</label>
+          <input type="range" id="aiComplexity" min="1" max="10" value="5" step="1">
+          <span class="value-display" id="aiComplexityValue">5</span>
+        </div>
+        <div class="control-group">
+          <label for="marketCompetition">Market Competition Level</label>
+          <input type="range" id="marketCompetition" min="1" max="10" value="5" step="1">
+          <span class="value-display" id="marketCompetitionValue">5</span>
+        </div>
+        <div class="control-group">
+          <label for="regulatoryCompliance">Regulatory Compliance Burden</label>
+          <input type="range" id="regulatoryCompliance" min="1" max="10" value="5" step="1">
+          <span class="value-display" id="regulatoryComplianceValue">5</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Initialize variables
+let aiAdoption = 50;
+let dataQuality = 70;
+let employeeTraining = 20;
+let investmentLevel = 2;
+let industryType = 'tech';
+let companySize = 'medium';
+let aiComplexity = 5;
+let marketCompetition = 5;
+let regulatoryCompliance = 5;
+
+// Get DOM elements
+const aiAdoptionSlider = document.getElementById('aiAdoption');
+const dataQualitySlider = document.getElementById('dataQuality');
+const employeeTrainingSlider = document.getElementById('employeeTraining');
+const investmentLevelSlider = document.getElementById('investmentLevel');
+const industryTypeSelect = document.getElementById('industryType');
+const companySizeSelect = document.getElementById('companySize');
+const aiComplexitySlider = document.getElementById('aiComplexity');
+const marketCompetitionSlider = document.getElementById('marketCompetition');
+const regulatoryComplianceSlider = document.getElementById('regulatoryCompliance');
+
+const aiAdoptionValue = document.getElementById('aiAdoptionValue');
+const dataQualityValue = document.getElementById('dataQualityValue');
+const employeeTrainingValue = document.getElementById('employeeTrainingValue');
+const investmentLevelValue = document.getElementById('investmentLevelValue');
+const aiComplexityValue = document.getElementById('aiComplexityValue');
+const marketCompetitionValue = document.getElementById('marketCompetitionValue');
+const regulatoryComplianceValue = document.getElementById('regulatoryComplianceValue');
+
+const productivityIncrease = document.getElementById('productivityIncrease');
+const costReduction = document.getElementById('costReduction');
+const customerSatisfaction = document.getElementById('customerSatisfaction');
+const timeToMarket = document.getElementById('timeToMarket');
+const roi = document.getElementById('roi');
+const innovationIndex = document.getElementById('innovationIndex');
+
+// Initialize charts
+const ctx = document.getElementById('impactChart').getContext('2d');
+const impactChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ['Current', 'Month 3', 'Month 6', 'Month 9', 'Month 12'],
+    datasets: [{
+      label: 'Productivity',
+      data: [100, 100, 100, 100, 100],
+      borderColor: 'rgb(75, 192, 192)',
+      tension: 0.1
+    }, {
+      label: 'Cost Efficiency',
+      data: [100, 100, 100, 100, 100],
+      borderColor: 'rgb(255, 99, 132)',
+      tension: 0.1
+    }, {
+      label: 'Customer Satisfaction',
+      data: [100, 100, 100, 100, 100],
+      borderColor: 'rgb(255, 205, 86)',
+      tension: 0.1
+    }, {
+      label: 'Time-to-Market',
+      data: [100, 100, 100, 100, 100],
+      borderColor: 'rgb(54, 162, 235)',
+      tension: 0.1
+    }, {
+      label: 'Innovation Index',
+      data: [100, 100, 100, 100, 100],
+      borderColor: 'rgb(153, 102, 255)',
+      tension: 0.1
+    }]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      y: {
+        beginAtZero: false,
+        suggestedMin: 80,
+        suggestedMax: 160,
+        title: {
+          display: true,
+          text: 'Impact (%)'
+        }
+      }
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            let label = context.dataset.label || '';
+            if (label) {
+              label += ': ';
+            }
+            if (context.parsed.y !== null) {
+              label += new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(context.parsed.y / 100 - 1);
+            }
+            return label;
+          }
+        }
+      }
+    }
+  }
+});
+
+const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+const comparisonChart = new Chart(comparisonCtx, {
+  type: 'radar',
+  data: {
+    labels: ['Productivity', 'Cost Efficiency', 'Customer Satisfaction', 'Time-to-Market', 'Innovation'],
+    datasets: [{
+      label: 'Your Company',
+      data: [0, 0, 0, 0, 0],
+      fill: true,
+      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      borderColor: 'rgb(75, 192, 192)',
+      pointBackgroundColor: 'rgb(75, 192, 192)',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgb(75, 192, 192)'
+    }, {
+      label: 'Industry Average',
+      data: [50, 50, 50, 50, 50],
+      fill: true,
+      backgroundColor: 'rgba(255, 99, 132, 0.2)',
+      borderColor: 'rgb(255, 99, 132)',
+      pointBackgroundColor: 'rgb(255, 99, 132)',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgb(255, 99, 132)'
+    }]
+  },
+  options: {
+    elements: {
+      line: {
+        borderWidth: 3
+      }
+    },
+    scales: {
+      r: {
+        angleLines: {
+          display: false
+        },
+        suggestedMin: 0,
+        suggestedMax: 100
+      }
+    }
+  }
+});
+
+// Industry-specific impact factors
+const industryFactors = {
+  tech: { productivity: 1.2, cost: 1.0, satisfaction: 1.1, timeToMarket: 1.3, innovation: 1.4 },
+  finance: { productivity: 1.1, cost: 1.2, satisfaction: 1.0, timeToMarket: 1.1, innovation: 1.2 },
+  healthcare: { productivity: 1.0, cost: 1.1, satisfaction: 1.3, timeToMarket: 1.0, innovation: 1.3 },
+  retail: { productivity: 1.1, cost: 1.1, satisfaction: 1.2, timeToMarket: 1.1, innovation: 1.1 },
+  manufacturing: { productivity: 1.3, cost: 1.2, satisfaction: 1.0, timeToMarket: 1.2, innovation: 1.2 },
+  education: { productivity: 1.1, cost: 1.0, satisfaction: 1.2, timeToMarket: 1.0, innovation: 1.3 },
+  energy: { productivity: 1.2, cost: 1.3, satisfaction: 1.0, timeToMarket: 1.1, innovation: 1.2 }
+};
+
+// Company size factors
+const sizeFactors = {
+  small: { productivity: 1.2, cost: 1.1, satisfaction: 1.3, timeToMarket: 1.4, innovation: 1.5 },
+  medium: { productivity: 1.1, cost: 1.2, satisfaction: 1.2, timeToMarket: 1.2, innovation: 1.3 },
+  large: { productivity: 1.0, cost: 1.3, satisfaction: 1.1, timeToMarket: 1.1, innovation: 1.2 },
+  enterprise: { productivity: 0.9, cost: 1.4, satisfaction: 1.0, timeToMarket: 1.0, innovation: 1.1 }
+};
+
+// Update function
+function updateSimulation() {
+  // Calculate impacts
+  const productivityImpact = calculateImpact('productivity');
+  const costImpact = calculateImpact('cost');
+  const satisfactionImpact = calculateImpact('satisfaction');
+  const timeToMarketImpact = calculateImpact('timeToMarket');
+  const innovationImpact = calculateImpact('innovation');
+  
+  // Calculate ROI
+  const totalImpact = (productivityImpact + costImpact + satisfactionImpact + timeToMarketImpact + innovationImpact) / 5;
+  const roiValue = (totalImpact * investmentLevel * 10 - investmentLevel) / investmentLevel * 100;
+  
+  // Update result cards with animations
+  updateResultWithAnimation(productivityIncrease, productivityImpact);
+  updateResultWithAnimation(costReduction, costImpact);
+  updateResultWithAnimation(customerSatisfaction, satisfactionImpact);
+  updateResultWithAnimation(timeToMarket, timeToMarketImpact);
+  updateResultWithAnimation(roi, roiValue);
+  updateResultWithAnimation(innovationIndex, innovationImpact, true);
+  
+  // Update impact chart
+  updateChartDataset(impactChart, 0, productivityImpact);
+  updateChartDataset(impactChart, 1, costImpact);
+  updateChartDataset(impactChart, 2, satisfactionImpact);
+  updateChartDataset(impactChart, 3, timeToMarketImpact);
+  updateChartDataset(impactChart, 4, innovationImpact);
+  impactChart.update();
+  
+  // Update comparison chart
+  comparisonChart.data.datasets[0].data = [
+    productivityImpact,
+    costImpact,
+    satisfactionImpact,
+    timeToMarketImpact,
+    innovationImpact
+  ];
+  comparisonChart.update();
+}
+
+function calculateImpact(metric) {
+  const weights = {
+    productivity: [0.3, 0.2, 0.2, 0.3],
+    cost: [0.4, 0.2, 0.1, 0.3],
+    satisfaction: [0.2, 0.3, 0.3, 0.2],
+    timeToMarket: [0.3, 0.2, 0.2, 0.3],
+    innovation: [0.3, 0.2, 0.2, 0.3]
+  };
+  
+  const normalizedInvestment = math.log(investmentLevel * 100 + 1) / math.log(1001);
+  const rawImpact = (
+    aiAdoption * weights[metric][0] +
+    dataQuality * weights[metric][1] +
+    (employeeTraining / 80 * 100) * weights[metric][2] +
+    normalizedInvestment * 100 * weights[metric][3]
+  ) / 2;
+  
+  const industryImpact = rawImpact * industryFactors[industryType][metric];
+  const sizeImpact = industryImpact * sizeFactors[companySize][metric];
+  
+  // Apply advanced options
+  const complexityFactor = 1 + (aiComplexity - 5) * 0.05;
+  const competitionFactor = 1 + (marketCompetition - 5) * 0.03;
+  const complianceFactor = 1 - (regulatoryCompliance - 5) * 0.02;
+  
+  return sizeImpact * complexityFactor * competitionFactor * complianceFactor;
+}
+
+function updateChartDataset(chart, index, impact) {
+  chart.data.datasets[index].data = [
+    100,
+    100 + impact * 0.4,
+    100 + impact * 0.7,
+    100 + impact * 0.9,
+    100 + impact
+  ];
+}
+
+function updateResultWithAnimation(element, value, isIndex = false) {
+  const formattedValue = isIndex ? value.toFixed(1) : `${value.toFixed(1)}%`;
+  element.textContent = formattedValue;
+  element.classList.add('pulse-animation');
+  setTimeout(() => {
+    element.classList.remove('pulse-animation');
+  }, 1000);
+}
+
+// Event listeners
+aiAdoptionSlider.addEventListener('input', (e) => {
+  aiAdoption = parseInt(e.target.value);
+  aiAdoptionValue.textContent = `${aiAdoption}%`;
+  updateSimulation();
+});
+
+dataQualitySlider.addEventListener('input', (e) => {
+  dataQuality = parseInt(e.target.value);
+  dataQualityValue.textContent = `${dataQuality}%`;
+  updateSimulation();
+});
+
+employeeTrainingSlider.addEventListener('input', (e) => {
+  employeeTraining = parseInt(e.target.value);
+  employeeTrainingValue.textContent = `${employeeTraining} hours`;
+  updateSimulation();
+});
+
+investmentLevelSlider.addEventListener('input', (e) => {
+  investmentLevel = parseFloat(e.target.value);
+  investmentLevelValue.textContent = `$${investmentLevel}M`;
+  updateSimulation();
+});
+
+industryTypeSelect.addEventListener('change', (e) => {
+  industryType = e.target.value;
+  updateSimulation();
+});
+
+companySizeSelect.addEventListener('change', (e) => {
+  companySize = e.target.value;
+  updateSimulation();
+});
+
+aiComplexitySlider.addEventListener('input', (e) => {
+  aiComplexity = parseInt(e.target.value);
+  aiComplexityValue.textContent = aiComplexity;
+  updateSimulation();
+});
+
+marketCompetitionSlider.addEventListener('input', (e) => {
+  marketCompetition = parseInt(e.target.value);
+  marketCompetitionValue.textContent = marketCompetition;
+  updateSimulation();
+});
+
+regulatoryComplianceSlider.addEventListener('input', (e) => {
+  regulatoryCompliance = parseInt(e.target.value);
+  regulatoryComplianceValue.textContent = regulatoryCompliance;
+  updateSimulation();
+});
+
+// Scenario loading function
+function loadScenario(scenario) {
+  switch(scenario) {
+    case 'conservative':
+      aiAdoption = 30;
+      dataQuality = 50;
+      employeeTraining = 10;
+      investmentLevel = 1;
+      aiComplexity = 3;
+      marketCompetition = 4;
+      regulatoryCompliance = 7;
+      break;
+    case 'moderate':
+      aiAdoption = 60;
+      dataQuality = 75;
+      employeeTraining = 30;
+      investmentLevel = 3;
+      aiComplexity = 6;
+      marketCompetition = 6;
+      regulatoryCompliance = 5;
+      break;
+    case 'aggressive':
+      aiAdoption = 90;
+      dataQuality = 95;
+      employeeTraining = 60;
+      investmentLevel = 8;
+      aiComplexity = 9;
+      marketCompetition = 8;
+      regulatoryCompliance = 3;
+      break;
+  }
+  
+  // Update sliders and values
+  aiAdoptionSlider.value = aiAdoption;
+  aiAdoptionValue.textContent = `${aiAdoption}%`;
+  
+  dataQualitySlider.value = dataQuality;
+  dataQualityValue.textContent = `${dataQuality}%`;
+  
+  employeeTrainingSlider.value = employeeTraining;
+  employeeTrainingValue.textContent = `${employeeTraining} hours`;
+  
+  investmentLevelSlider.value = investmentLevel;
+  investmentLevelValue.textContent = `$${investmentLevel}M`;
+  
+  aiComplexitySlider.value = aiComplexity;
+  aiComplexityValue.textContent = aiComplexity;
+  
+  marketCompetitionSlider.value = marketCompetition;
+  marketCompetitionValue.textContent = marketCompetition;
+  
+  regulatoryComplianceSlider.value = regulatoryCompliance;
+  regulatoryComplianceValue.textContent = regulatoryCompliance;
+  
+  updateSimulation();
+}
+
+// Add custom tooltip
+const tooltip = document.createElement('div');
+tooltip.classList.add('custom-tooltip');
+document.body.appendChild(tooltip);
+
+document.querySelectorAll('.control-group').forEach(group => {
+  const label = group.querySelector('label');
+  label.addEventListener('mouseover', (e) => {
+    showTooltip(e, getTooltipContent(label.getAttribute('for')));
+  });
+  label.addEventListener('mouseout', hideTooltip);
+});
+
+function showTooltip(e, content) {
+  tooltip.innerHTML = content;
+  tooltip.style.display = 'block';
+  tooltip.style.left = e.pageX + 10 + 'px';
+  tooltip.style.top = e.pageY + 10 + 'px';
+}
+
+function hideTooltip() {
+  tooltip.style.display = 'none';
+}
+
+function getTooltipContent(id) {
+  switch(id) {
+    case 'aiAdoption':
+      return 'The extent to which AI technologies are integrated into business processes.';
+    case 'dataQuality':
+      return 'The accuracy, completeness, and reliability of data used for AI operations.';
+    case 'employeeTraining':
+      return 'The amount of time invested in training employees to work with AI systems.';
+    case 'investmentLevel':
+      return 'The financial resources allocated to AI implementation and maintenance.';
+    case 'industryType':
+      return 'The specific sector in which the business operates, influencing AI impact.';
+    case 'companySize':
+      return 'The size of the company, affecting the scale and complexity of AI implementation.';
+    case 'aiComplexity':
+      return 'The sophistication level of the AI systems being implemented.';
+    case 'marketCompetition':
+      return 'The level of competition in the market, influencing the pressure to adopt AI.';
+    case 'regulatoryCompliance':
+      return 'The burden of regulatory requirements affecting AI implementation and use.';
+    default:
+      return '';
+  }
+}
+
+// Initial update
+updateSimulation();
+</script>
+</body>
+</html>
